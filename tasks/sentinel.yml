@@ -127,6 +127,7 @@
 # a start and then restart
 - name: flush handlers to apply config changes
   meta: flush_handlers
+  when: false
 
 - name: ensure sentinel is running
   service:
