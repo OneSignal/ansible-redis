@@ -315,6 +315,10 @@ redis_sentinel_monitors:
     notification_script: false
     client_reconfig_script: false
     rename_commands: []
+
+# Advanced Section
+redis_hz: 10
+
 ```
 
 ## Facts
