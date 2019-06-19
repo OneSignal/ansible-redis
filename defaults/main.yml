@@ -117,3 +117,6 @@ redis_sentinel_monitors:
     failover_timeout: 180000
     notification_script: false
     client_reconfig_script: false
+
+# Advanced Section
+redis_hz: 10

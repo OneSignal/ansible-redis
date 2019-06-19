@@ -4,7 +4,7 @@
 
  - Ansible 2.1+
  - Compatible with most versions of Ubuntu/Debian and RHEL/CentOS 6.x
- 
+
 ## Contents
 
  1. [Installation](#installation)
@@ -301,6 +301,9 @@ redis_sentinel_monitors:
     failover_timeout: 180000
     notification_script: false
     client_reconfig_script: false
+
+# Advanced Section
+redis_hz: 10
 
 ```
 
