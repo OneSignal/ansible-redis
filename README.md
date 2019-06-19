@@ -308,6 +308,9 @@ redis_sentinel_monitors:
     notification_script: false
     client_reconfig_script: false
 
+# Advanced Section
+redis_hz: 10
+
 ```
 
 ## Facts
