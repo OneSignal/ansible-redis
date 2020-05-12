@@ -46,11 +46,12 @@
     - (redis_pidfile|dirname).startswith('/var/run') or (redis_pidfile|dirname).startswith('/run')
 
 - name: reload systemd daemon
-  command: systemctl daemon-reload
+  systemd:
+    daemon_reload: true
   when:
     - redis_as_service
     - ansible_service_mgr|default() == "systemd"
-    - redis_unit_file|changed
+    - redis_unit_file is changed
 
 - name: set redis to start at boot
   service:
@@ -76,9 +77,18 @@
     - redis_logfile != '""'
     - not logdir.stat.exists
 
-- name: touch the log file
+- name: create log file if it does not exist
+  copy:
+    dest: "{{ redis_logfile }}"
+    content: ""
+    force: false # Don't override file contet if the file already exits
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+  when: redis_logfile != '""'
+  
+- name: update permissions of log file if needed
   file:
-    state: touch
+    state: file
     path: "{{ redis_logfile }}"
     owner: "{{ redis_user }}"
     group: "{{ redis_group }}"
@@ -104,10 +114,10 @@
 - name: create redis config file
   template:
     src: redis.conf.j2
-    dest: /etc/redis/{{ redis_port }}.conf
+    dest: /etc/redis/{{ redis_config_file_name }}
     owner: "{{ redis_user }}"
     mode: 0640
-  notify: "restart redis {{ redis_port }}"
+  notify: "restart redis"
 
 - name: add redis init config file
   template:
@@ -115,7 +125,7 @@
     src: redis.init.conf.j2
     mode: 0600
   when: ansible_os_family == "RedHat"
-  notify: "restart redis {{ redis_port }}"
+  notify: "restart redis"
 
 - name: add redis init config file
   template:
@@ -123,7 +133,7 @@
     src: redis.init.conf.j2
     mode: 0600
   when: ansible_os_family == "Debian"
-  notify: "restart redis {{ redis_port }}"
+  notify: "restart redis"
 
 # Flush handlers before ensuring the service is started to prevent
 # a start and then restart
